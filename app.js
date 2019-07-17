@@ -33,6 +33,8 @@ const Blog = mongoose.model('Blog', blogSchema);
 // });
 
 // routes
+
+// -- index
 app.get('/', (req, res) => {
   res.redirect('/blogs');
 });
@@ -43,6 +45,30 @@ app.get('/blogs', (req, res) => {
       console.log('error', err);
     } else {
       res.render('index', { blogs });
+    }
+  });
+});
+
+app.get('/blogs/new', (req, res) => {
+  res.render('new');
+});
+
+app.post('/blogs', (req, res) => {
+  Blog.create(req.body.blog, (err, blog) => {
+    if (err) {
+      res.render('new');
+    } else {
+      res.redirect('/blogs');
+    }
+  });
+});
+
+app.get('/blogs/:id', (req, res) => {
+  Blog.findById(req.params.id, (err, blog) => {
+    if (err) {
+      res.redirect('/blogs');
+    } else {
+      res.render('show', { blog });
     }
   });
 });
