@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
+const expressSanitizer = require('express-sanitizer');
 const mongoose = require('mongoose');
 
 // app config
@@ -12,6 +13,8 @@ mongoose.connect('mongodb://localhost/restful_blog_app', {
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(expressSanitizer()); // must go after body parser
 app.use(methodOverride('_method'));
 
 // Mongoose/Model config
@@ -86,11 +89,22 @@ app.get('/blogs/:id/edit', (req, res) => {
 });
 
 app.put('/blogs/:id', (req, res) => {
+  req.body.blog.body = req.sanitize(req.body.blog.body);
   Blog.findByIdAndUpdate(req.params.id, req.body.blog, (err, blog) => {
     if (err) {
       res.redirect('/blogs');
     } else {
       res.redirect(`/blogs/${req.params.id}`);
+    }
+  });
+});
+
+app.delete('/blogs/:id', (req, res) => {
+  Blog.findByIdAndRemove(req.params.id, err => {
+    if (err) {
+      res.redirect('/blogs');
+    } else {
+      res.redirect('/blogs');
     }
   });
 });
