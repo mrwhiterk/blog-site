@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 
 // app config
 mongoose.connect('mongodb://localhost/restful_blog_app', {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  useFindAndModify: false
 });
 
 app.set('view engine', 'ejs');
